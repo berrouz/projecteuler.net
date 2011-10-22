@@ -19,50 +19,71 @@ source="08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
 20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48"
 
-array = source.split(/\n/).map{|i|i.split(/ /)}.flatten.map(&:to_i)
-array1 = source.split(/\n/).map{|i|i.split(/ /)}.map{|k| k.map(&:to_i)}
-array2 = array1.transpose
-def left_right(array, length_combination=4)
-	max_row=0
-	array.each do |string|
-		
-	end
-	max_row
-end
-
-
-def find_for_string(string)
-	position=0
-		max=0
-		until position+length_combination == string.length 
-					s = string[position..position+length_combination].inject{|i,s| s*=i}					
-					max = s if s > max
-					position+=1
-		end
-		max_row= max if max > max_row
-end
-
 def make_columns(array, length=4)
 	big=[]
 	row_length = Math.sqrt(array.length).to_i
 	row_length.times do |column_initial|
 		diags=[]
-		puts "initial is #{column_initial}"
 		(column_initial+1).times do |q|
 			diags << array[column_initial+(row_length-1)*q]
-			puts "it's array #{diags}"
-		end
+        end
 		big << diags
-	end	
-	big
-end	
+	end
 
+	# reverse
 
-def diag_right_top_left_bottom
-		a = make_columns(array)
-		a.each do |arr|
-			arr.
-		end
+	row_length.times do |column_initial|
+		diags=[]
+		(column_initial+1).times do |q|
+			diags << array.reverse[column_initial+(row_length-1)*q]
+        end
+		big << diags
+	end
+	big.uniq.delete_if {|arr| arr.length < 4}
+end
+def left_right(array, length_combination=4)
+	max_row=[]
+	array.each do |arr|
+        max_row << find_for_string(arr)
+	end
+	max_row.max
 end
 
-puts diag_left_top_right_bottom(array)
+
+def find_for_string(array, length_combination=4)
+	position=0
+	sums=[]
+	until position+length_combination-1 == array.length
+	    s = array[position..(position+length_combination-1)].inject{|i,s| s*=i}
+		position+=1
+	    sums << s
+	end
+	sums.max
+end
+
+
+def diag(array)
+		maxes =[]
+		a = make_columns(array)
+		a.compact.each do |arr|
+			maxes << find_for_string(arr.compact, 4)
+		end
+		maxes.max
+end
+def maximum(source)
+    array = source.split(/\n/).map{|i|i.split(/ /)}.flatten.map(&:to_i)
+    array_rl = source.split(/\n/).map{|i|i.split(/ /)}.map{|k| k.map(&:to_i)}
+    array_lr = array_rl.reverse
+    max_arrays =[]
+    max_arrays << left_right(array_rl)
+    max_arrays << left_right(array_lr)
+    puts array_rl.inspect
+    max_arrays << diag(array)
+    max_arrays << diag(array_lr.flatten)
+    max_arrays.max
+end
+
+
+
+puts maximum(source)
+
