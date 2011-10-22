@@ -77,7 +77,6 @@ def maximum(source)
     max_arrays =[]
     max_arrays << left_right(array_rl)
     max_arrays << left_right(array_lr)
-    puts array_rl.inspect
     max_arrays << diag(array)
     max_arrays << diag(array_lr.flatten)
     max_arrays.max
